@@ -11,8 +11,9 @@ source("library.R")
 ##################################################################
 # Data illustration:
 ##################################################################
-# Choose the subject:
-load("subject7.Rdata") # Choose subject 7
+# Choose the subject: Uncommentize the following
+# load("subject5.Rdata") # Choose subject 5
+# load("subject7.Rdata") # Choose subject 7
 # load("subject10.Rdata") # Choose subject 10
 
 # Number of samples:
@@ -316,7 +317,9 @@ pl_passive_step4 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
 ##################################################################
 # Plotting:
 ##################################################################
-pdf(file = "./illustration_subject7.pdf", width=8.93, height=11) # If subject 7 is considered
+# Choose the subject: Uncommentize the following
+# pdf(file = "./illustration_subject5.pdf", width=8.93, height=11) # If subject 5 is considered
+# pdf(file = "./illustration_subject7.pdf", width=8.93, height=11) # If subject 7 is considered
 # pdf(file = "./illustration_subject10.pdf", width=8.93, height=11) # If subject 10 is considered
 
 par(mar=c(0,0,0,0))

@@ -16,8 +16,9 @@ source("library.R")
 ##################################################################
 # Data illustration:
 ##################################################################
-# Choose the subject:
-load("subject7.Rdata") # Choose subject 7
+# Choose the subject: Uncommentize the following
+# load("subject5.Rdata") # Choose subject 5
+# load("subject7.Rdata") # Choose subject 7
 # load("subject10.Rdata") # Choose subject 10
 
 # Number of samples:
@@ -185,6 +186,10 @@ while(cnt <= cnt_max & iter <= 50){
   cnt <- cnt + step_size
 }
 
+# # Choose the subject: Uncommentize the following
+# save(output,step_size,window_size,file="subj5_c2.RData") # If subject 5 with c=2
+# save(output,step_size,window_size,file="subj5_c5.RData") # If subject 5 with c=5
+
 # save(output,step_size,window_size,file="subj7_c2.RData") # If subject 7 with c=2
 # save(output,step_size,window_size,file="subj7_c5.RData") # If subject 7 with c=5
 
@@ -195,11 +200,15 @@ while(cnt <= cnt_max & iter <= 50){
 ##################################################################
 # Result:
 ##################################################################
-# load("data_SPD_final_subj7_step2.RData"); t_star <- c(31,92)
-# load("data_SPD_final_subj7_step5.RData"); t_star <- c(31,92)
+# # Choose the subject: Uncommentize the following
+# load("subj5_step2.RData"); t_star <- 82
+# load("subj5_step5.RData"); t_star <- 82
 
-# load("data_SPD_final_subj10_step2.RData"); t_star <- 69
-# load("data_SPD_final_subj10_step5.RData"); t_star <- 69
+# load("subj7_step2.RData"); t_star <- c(31,92)
+# load("subj7_step5.RData"); t_star <- c(31,92)
+
+# load("subj10_step2.RData"); t_star <- 69
+# load("subj10_step5.RData"); t_star <- 69
 
 metric_output <- SPD_metric(output,iter,step_size,t_star)
 round(metric_output$table,2)
