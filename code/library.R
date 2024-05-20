@@ -206,7 +206,7 @@ SPD_step2 <- function(Step1){
       if (is.na(match(k,sig_idx))){ # if initial kth segment is not significant,
         
         merge <- 1
-        while( is.na(match((k+merge),sig_idx)) & (k+merge) <= length(win_start) ){
+        while( match((k+merge),sig_idx) & (k+merge) <= length(win_start) ){
           merge <- merge+1
         }
         
