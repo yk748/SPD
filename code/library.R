@@ -147,42 +147,57 @@ SPD_step2 <- function(Step1){
   alpha <- 0.05
   X_name <- Step1$X_name
   
-  # Step 2-1:
+  # Step 2: Test of significance
   sig_idx <- NULL; insig_idx <- NULL; TT_k <- vector("numeric",num_seg)
-  pval <- vector("numeric",num_seg)
   decision <- vector("numeric",num_seg)
+  current_seg <- NULL
+  pval <- vector("numeric",num_seg)
   
   for (k in 1:num_seg){
     
     TT_k[k] <- dim(data_seg[[k]])[1]
+    
     if ( sum(diff(data_seg[[k]]$adj_stress) == 0) == (TT_k[k]-1)){ 
       # if adjusted stress has no fluctuation,
-      insig_idx <- c(insig_idx,k)
       decision[k] <- "No fluctuation, merged"
+      pval[k] <- NA
       
-    }else if( dim(data_seg[[k]])[1] <= length(X_name)){ 
+    }else if( TT_k[k] <= length(X_name)){ 
       # If sample length is not enough (less than equal to 11),
-      insig_idx <- c(insig_idx,k)
       decision[k] <- "Sample size shortage, merged"
+      pval[k] <- NA
+      
+    }
+    
+    if (decision[k]!=0){
+      current_seg <- rbind(current_seg,data_seg[[k]])
+      next
       
     }else{
+      current_seg <- data_seg[[k]]
       
-      reg_k <- lm(adj_stress~.,data=data_seg[[k]][,c("adj_stress",X_name)])
-      null_k <- lm(adj_stress~1,data=data_seg[[k]][,c("adj_stress",X_name)])
-      anova <- anova(reg_k,null_k)
-      pval[k] <- anova$`Pr(>F)`[2]
+    }
+    
+    reg <- lm(adj_stress~.,current_seg[,c("adj_stress",X_name)])
+    null <- lm(adj_stress~1,current_seg[,c("adj_stress",X_name)])
+    anova <- anova(reg,null)
+    pval[k] <- anova$`Pr(>F)`[2]
+    
+    if(is.nan(pval[k])){
+      decision[k] <- "NaN produced, merged"
+      pval[k] <- NA
+      current_seg <- rbind(current_seg,data_seg[[k]])
+      next
       
-      if(is.nan(pval[k])){
+    }else{
+      if (pval[k] < alpha){ # If pval < alpha
+        sig_idx <- c(sig_idx,k)
+        decision[k] <- "significant"
+        
+      }else{ # If pval >= alpha
         insig_idx <- c(insig_idx,k)
-        decision[k] <- "NaN produced, merged"
-      }else{
-        if (pval[k] < alpha){
-          sig_idx <- c(sig_idx,k)
-          decision[k] <- "significant"
-        }else{
-          insig_idx <- c(insig_idx,k)
-          decision[k] <- "insignificant"
-        }
+        decision[k] <- "insignificant"
+        
       }
     }
   }
@@ -194,34 +209,53 @@ SPD_step2 <- function(Step1){
     
   }else{
     TT <- sum(TT_k)
+    # Based on Step 1 result:
     win_start <- c(1,Step1$t_hat); win_end <- c(Step1$t_hat-1,TT)
-    sig_data_seg <- list(); sig_seg_start <- sig_seg_end <- NULL
-    cnt_sig <- 0; k_next <- 0
+    # Refinement:
+    sig_data_seg <- list(); 
+    sig_seg_start <- sig_seg_end <- NULL
+    cnt_sig <- 0; cumm_idx <- NULL; 
+    effective_idx <- c(1:length(win_start))[!is.na(match(decision,c("insignificant","significant")))]
+    
     for (k in 1:length(win_start)){
       
-      if (k <= k_next){
-        next
-      }
-      
-      if (is.na(match(k,sig_idx))){ # if initial kth segment is not significant,
-        
-        merge <- 1
-        while( match((k+merge),sig_idx) & (k+merge) <= length(win_start) ){
-          merge <- merge+1
+      if (is.na(match(k,effective_idx)!=0)){
+        cumm_idx <- c(cumm_idx,k)
+        if (k == length(win_start)){
+          
+        }else{
+          next 
         }
         
-        cnt_sig <- cnt_sig + 1
-        k_next <- k+merge-1
-        sig_data_seg[[cnt_sig]] <- do.call("rbind",lapply(X=c(k:k_next),
-                                                          FUN=function(X)data_seg[[X]]))
-        sig_seg_start <- c(sig_seg_start,win_start[k])
-        sig_seg_end <- c(sig_seg_end,win_end[k_next])
-      }else{ # if initial kth segment is significant,
-        
-        cnt_sig <- cnt_sig + 1
-        sig_data_seg[[cnt_sig]] <- data_seg[[k]]
-        sig_seg_start <- c(sig_seg_start,win_start[k])
-        sig_seg_end <- c(sig_seg_end,win_end[k])
+      }else{
+        if (is.na(match(k,sig_idx))){ # if this segment is not significant,
+          cumm_idx <- c(cumm_idx,k)
+          
+          cnt_sig <- cnt_sig + 1
+          sig_data_seg[[cnt_sig]] <- do.call("rbind",lapply(X=cumm_idx,
+                                                            FUN=function(X)data_seg[[X]]))
+          
+          sig_seg_start <- c(sig_seg_start,win_start[min(cumm_idx)])
+          sig_seg_end <- c(sig_seg_end,win_end[max(cumm_idx)])
+          cumm_idx <- NULL
+          
+        }else{ # if this segment is significant,
+          cnt_sig <- cnt_sig + 1
+          sig_data_seg[[cnt_sig]] <- data_seg[[k]]
+          sig_seg_start <- c(sig_seg_start,win_start[k])
+          sig_seg_end <- c(sig_seg_end,win_end[k])
+          
+          # If cummulative segments that have to be merged exist,
+          if (sum(cumm_idx)>0){
+            cnt_sig <- cnt_sig + 1
+            sig_data_seg[[cnt_sig]] <- do.call("rbind",lapply(X=cumm_idx,
+                                                              FUN=function(X)data_seg[[X]]))
+            
+            sig_seg_start <- c(sig_seg_start,win_start[min(cumm_idx)])
+            sig_seg_end <- c(sig_seg_end,win_end[max(cumm_idx)])
+            cumm_idx <- NULL
+          }
+        }
       }
     } 
   }
