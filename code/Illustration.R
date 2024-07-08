@@ -9,15 +9,11 @@ library("patchwork")
 source("library.R")
 
 ##################################################################
-# Figure 3 in Section 3.2:
+# Figure 3 in Section 3.2 & Figure 6 in Appendix:
 ##################################################################
 # Choose the subject: Uncommentize the following
 load("sternrelief9.RData")
-# load("sternrelief22.RData")
-# load("wynneprotect23.RData")
 # load("gayevskyreds18.RData")
-# load("sternrelief4.RData")
-# load("sternrelief5.RData")
 
 # Number of samples:
 TT <- dim(data)[1]
@@ -115,15 +111,16 @@ pl_passive <- ggplot(tibble_passive, aes(time, value, colour=name)) +
         axis.title.y = element_blank(),
         legend.position = "none")
 
-
+# Choose the subject: Uncommentize the following
 pdf(file ="./initialization1.pdf", width=13, height=13)
+# pdf(file ="./initialization2.pdf", width=13, height=13)
 par(mar=c(0,0,0,0))
 ggarrange(pl_active,pl_passive,nrow=2,align="v",heights=c(5,12))
 dev.off()
 
 
 ##################################################################
-# Figure 4 in Section 3.2:
+# Figure 4 in Section 3.2 & Figure 7 in Appendix:
 ##################################################################
 X_name <- c("active_time", "step_count",
             "conversation_percent","tic_voiced_time",
@@ -350,8 +347,9 @@ pl_passive_step4 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
         axis.title.y = element_blank(),
         legend.position = "none")
 
-
+# Choose the subject: Uncommentize the following
 pdf(file = "./result_illustration1.pdf", width=13, height=13)
+# pdf(file = "./result_illustration2.pdf", width=13, height=13)
 par(mar=c(0,0,0,0))
 ggarrange(
   ggarrange(pl_stress_step1,pl_passive_step1,nrow=2,align="v",heights=c(3,9)),
