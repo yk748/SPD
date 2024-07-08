@@ -105,7 +105,7 @@ SPD_step1 <- function(X_train,Y_train,X_name,Y_name){
   output_seg <- sort(unique(c(output_1st_mmt$estimates,
                               output_2nd_mmt$estimates)))
   
-  # Construct the segments and cosegments
+  # Construct the segments and co-segments
   if (length(output_seg[-c(1,length(output_seg))]) == 0){
     
     data_seg <- list()
@@ -307,7 +307,7 @@ SPD_step3 <- function(Step2){
     S_c <- sum(reg_c$residuals^2)
     
     df1 <- num_param
-    df2 <- N1+N2-2*num_param
+    df2 <- N1+N2-2*num_param # This may be zero or negative!
     F_stat[k] <- ( (S_c - (S1+S2))/df1 )/( (S1+S2)/df2 )
     pval[k] <- 1- pf(F_stat[k],df1,df2)
     
@@ -398,6 +398,7 @@ SPD_step3 <- function(Step2){
   # output$notice <- notice
   return(output)
 }
+
 
 
 # ------------------------------------------------------------- #
@@ -801,7 +802,7 @@ SPD_step5 <- function(Final_segment,Y_train,X_train,Y_test,X_test,X_name,window_
 # ------------------------------------------------------------- #
 # SPD_metric
 # ------------------------------------------------------------- #
-SPD_metric <- function(output,iter,step_size,t_star){
+SPD_metric <- function(output,step_size,t_star){
   
   num_seg <- length(t_star)+1
   num_iter <- length(output)

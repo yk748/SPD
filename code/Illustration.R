@@ -9,12 +9,15 @@ library("patchwork")
 source("library.R")
 
 ##################################################################
-# Data illustration:
+# Figure 3 in Section 3.2:
 ##################################################################
 # Choose the subject: Uncommentize the following
-# load("subject5.Rdata") # Choose subject 5
-# load("subject7.Rdata") # Choose subject 7
-# load("subject10.Rdata") # Choose subject 10
+load("sternrelief9.RData")
+# load("sternrelief22.RData")
+# load("wynneprotect23.RData")
+# load("gayevskyreds18.RData")
+# load("sternrelief4.RData")
+# load("sternrelief5.RData")
 
 # Number of samples:
 TT <- dim(data)[1]
@@ -78,15 +81,18 @@ pl_active <- ggplot(tibble_active, aes(time, value, colour=name)) +
   geom_vline(data=add_score,aes(xintercept=vals),col="violetred") +
   geom_vline(data=sub_score,aes(xintercept=vals),col="dodgerblue") +
   geom_hline(data=mean_level,aes(yintercept=vals),linetype="dashed") +
-  facet_grid(name~., switch = "y", scales = "fixed") +
+  facet_grid(name~., switch = "y", scales = "fixed",
+             labeller=labeller(name = act.name.labs)) +
   labs(title = "Active variables") +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size=10, face=2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=6),
         legend.position = "none")
 
 pl_passive <- ggplot(tibble_passive, aes(time, value, colour=name)) +
@@ -94,23 +100,30 @@ pl_passive <- ggplot(tibble_passive, aes(time, value, colour=name)) +
   scale_x_continuous(name="Time",breaks=seq(times[1],times[2],10)) +
   scale_y_continuous(name="") +
   scale_color_manual(values=paired(11)) +
-  facet_grid(name~., switch = "y", scales = "free_y") +
+  facet_grid(name~., switch = "y", scales = "free_y",
+             labeller=labeller(name = pass.name.labs)) +
   labs(title = "Passive sensing variables") +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size = 10, face = 2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
         legend.position = "none")
 
+
+pdf(file ="./initialization1.pdf", width=13, height=13)
 par(mar=c(0,0,0,0))
 ggarrange(pl_active,pl_passive,nrow=2,align="v",heights=c(5,12))
+dev.off()
 
 
 ##################################################################
-# Algoritm illustration:
+# Figure 4 in Section 3.2:
 ##################################################################
 X_name <- c("active_time", "step_count",
             "conversation_percent","tic_voiced_time",
@@ -147,10 +160,7 @@ Step3 <- SPD_step3(Step2)
 Step4 <- SPD_step4(Step3)
 
 
-
-##################################################################
 # Display results:
-##################################################################
 tibble_stress <- tibble_active[which(tibble_active$name=="adj_stress"|
                                        tibble_active$name=="stress"),]
 
@@ -163,15 +173,18 @@ pl_stress_step1 <- ggplot(tibble_stress, aes(time, value, colour=name)) +
   geom_vline(data=add_score,aes(xintercept=vals),linetype="dashed",col="violetred") +
   geom_vline(data=sub_score,aes(xintercept=vals),linetype="dashed",col="dodgerblue") +
   geom_vline(xintercept=Step1$t_hat,col="green",linetype=4,size=2) +
-  facet_grid(name~., switch = "y", scales = "fixed") +
+  facet_grid(name~., switch = "y", scales = "fixed",
+             labeller=labeller(name = act.name.labs)) +
   labs(title = "Result of Step 1") +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size=8, face=2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size=8),
+        axis.text.y = element_text(size=6),
         legend.position = "none")
 
 pl_passive_step1 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
@@ -180,14 +193,18 @@ pl_passive_step1 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
   scale_y_continuous(name="") +
   geom_vline(xintercept=Step1$t_hat,col="green",linetype=4,size=2) +
   scale_color_manual(values=paired(11)) +
-  facet_grid(name~., switch = "y", scales = "free_y") +
+  facet_grid(name~., switch = "y", scales = "free_y",
+             labeller=labeller(name = pass.name.labs)) +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size = 8, face = 2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
         legend.position = "none")
 
 
@@ -201,15 +218,18 @@ pl_stress_step2 <- ggplot(tibble_stress, aes(time, value, colour=name)) +
   geom_vline(data=sub_score,aes(xintercept=vals),linetype="dashed",col="dodgerblue") +
   geom_vline(xintercept=Step1$t_hat,col="green",linetype=4,size=2) +
   geom_vline(xintercept=Step2$t_hat,col="yellow",linetype=3,size=2) +
-  facet_grid(name~., switch = "y", scales = "fixed") +
+  facet_grid(name~., switch = "y", scales = "fixed",
+             labeller=labeller(name = act.name.labs)) +
   labs(title = "Result of Step 2") +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size=8, face=2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size=8),
+        axis.text.y = element_text(size=6),
         legend.position = "none")
 
 pl_passive_step2 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
@@ -219,14 +239,18 @@ pl_passive_step2 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
   geom_vline(xintercept=Step1$t_hat,col="green",linetype=4,size=2) +
   geom_vline(xintercept=Step2$t_hat,col="yellow",linetype=3,size=2) +
   scale_color_manual(values=paired(11)) +
-  facet_grid(name~., switch = "y", scales = "free_y") +
+  facet_grid(name~., switch = "y", scales = "free_y",
+             labeller=labeller(name = pass.name.labs)) +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size = 8, face = 2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
         legend.position = "none")
 
 
@@ -241,15 +265,18 @@ pl_stress_step3 <- ggplot(tibble_stress, aes(time, value, colour=name)) +
   geom_vline(xintercept=Step1$t_hat,col="green",linetype=4,size=2) +
   geom_vline(xintercept=Step2$t_hat,col="yellow",linetype=3,size=2) +
   geom_vline(xintercept=Step3$t_hat,col="orange",linetype=2,size=2) +
-  facet_grid(name~., switch = "y", scales = "fixed") +
+  facet_grid(name~., switch = "y", scales = "fixed",
+             labeller=labeller(name = act.name.labs)) +
   labs(title = "Result of Step 3") +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size=8, face=2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size=8),
+        axis.text.y = element_text(size=6),
         legend.position = "none")
 
 pl_passive_step3 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
@@ -260,16 +287,19 @@ pl_passive_step3 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
   geom_vline(xintercept=Step2$t_hat,col="yellow",linetype=3,size=2) +
   geom_vline(xintercept=Step3$t_hat,col="orange",linetype=2,size=2) +
   scale_color_manual(values=paired(11)) +
-  facet_grid(name~., switch = "y", scales = "free_y") +
+  facet_grid(name~., switch = "y", scales = "free_y",
+             labeller=labeller(name = pass.name.labs)) +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size = 8, face = 2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
         legend.position = "none")
-
 
 # Result after Step 4:
 pl_stress_step4 <- ggplot(tibble_stress, aes(time, value, colour=name)) +
@@ -283,15 +313,18 @@ pl_stress_step4 <- ggplot(tibble_stress, aes(time, value, colour=name)) +
   geom_vline(xintercept=Step2$t_hat,col="yellow",linetype=3,size=2) +
   geom_vline(xintercept=Step3$t_hat,col="orange",linetype=2,size=2) +
   geom_vline(xintercept=Step4$t_hat,col="red",linetype=1,size=2) +
-  facet_grid(name~., switch = "y", scales = "fixed") +
+  facet_grid(name~., switch = "y", scales = "fixed",
+             labeller=labeller(name = act.name.labs)) +
   labs(title = "Result of Step 4") +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size=8, face=2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size=8),
+        axis.text.y = element_text(size=6),
         legend.position = "none")
 
 pl_passive_step4 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
@@ -303,25 +336,22 @@ pl_passive_step4 <- ggplot(tibble_passive, aes(time, value, colour=name)) +
   geom_vline(xintercept=Step3$t_hat,col="orange",linetype=2,size=2) +
   geom_vline(xintercept=Step4$t_hat,col="red",linetype=1,size=2) +
   scale_color_manual(values=paired(11)) +
-  facet_grid(name~., switch = "y", scales = "free_y") +
+  facet_grid(name~., switch = "y", scales = "free_y",
+             labeller=labeller(name = pass.name.labs)) +
   theme_classic() +
   theme(panel.background = element_rect(color = "black"),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.spacing.y = unit(0, "npc"),
-        strip.text = element_text(size=6, face=2),
-        axis.text = element_text(size=6),
+        strip.text = element_text(size = 8, face = 2),
+        strip.text.y.left = element_text(angle=0,hjust=1),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
         legend.position = "none")
 
 
-##################################################################
-# Plotting:
-##################################################################
-# Choose the subject: Uncommentize the following
-# pdf(file = "./illustration_subject5.pdf", width=8.93, height=11) # If subject 5 is considered
-# pdf(file = "./illustration_subject7.pdf", width=8.93, height=11) # If subject 7 is considered
-# pdf(file = "./illustration_subject10.pdf", width=8.93, height=11) # If subject 10 is considered
-
+pdf(file = "./result_illustration1.pdf", width=13, height=13)
 par(mar=c(0,0,0,0))
 ggarrange(
   ggarrange(pl_stress_step1,pl_passive_step1,nrow=2,align="v",heights=c(3,9)),
@@ -329,6 +359,5 @@ ggarrange(
   ggarrange(pl_stress_step3,pl_passive_step3,nrow=2,align="v",heights=c(3,9)),
   ggarrange(pl_stress_step4,pl_passive_step4,nrow=2,align="v",heights=c(3,9)),
   nrow=2,ncol=2)
-
 dev.off()
 
