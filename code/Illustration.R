@@ -9,11 +9,11 @@ library("patchwork")
 source("library.R")
 
 ##################################################################
-# Figure 3 in Section 3.2 & Figure 6 in Appendix:
+# Figures 3 and 4 in Section 3 & Figures D2 and D3 in Appendix:
 ##################################################################
 # Choose the subject: Uncommentize the following
-load("sternrelief9.RData")
-# load("gayevskyreds18.RData")
+load("sternrelief5.RData")
+# load("sternrelief9.RData")
 
 # Number of samples:
 TT <- dim(data)[1]
