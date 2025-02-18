@@ -17,7 +17,7 @@ source("library.R")
 ##################################################################
 load("subject_id_final.RData")
 
-for (subj_no in 1:9){
+for (subj_no in 1:6){
   
   # ------------------------------------------------------------- #
   # Set up for the experiment:
@@ -201,7 +201,7 @@ for (subj_no in 1:9){
 ##################################################################
 load("subject_id_final.RData")
 
-for (subj_no in 1:9){
+for (subj_no in 1:6){
   
   for (trial in 1:2){
     
