@@ -1,6 +1,6 @@
 # SPD
 
-Stress Period Detection (SPD) is a data-driven algorithm that detects the emotional stressful periods using passively sensed measures and emotional stress levels and related feelings (arousal and valence in our context) collected from smartphones.  A fully functioning package is under development and is expected to be released soon. The corresponding manuscript is Kim et al ([2025](#ref-spd))
+Stress Period Detection (SPD) is a data-driven algorithm that detects the emotional stressful periods using passively sensed measures and emotional stress levels and related feelings (arousal and valence in our context) collected from smartphones.  A fully functioning package is under development and is expected to be released soon. The corresponding manuscript is Kim, Basu, and Banerjee ([2025](#ref-spd))
 
 ## References
 
